@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export const DecisionContext = createContext();
 
 export const DecisionProvider = ({ children }) => {
@@ -34,7 +36,7 @@ export const DecisionProvider = ({ children }) => {
                 // 1. If we have a token but no user data (e.g., page refresh), fetch the user FIRST
                 if (!user) {
                     try {
-                        const res = await axios.get('http://localhost:5000/api/auth/me', {
+                        const res = await axios.get(`${API_URL}/api/auth/me`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         // Save the fresh user data (containing name/email)
@@ -64,7 +66,7 @@ export const DecisionProvider = ({ children }) => {
     const login = async (email, password) => {
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+            const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
             const { token, ...userData } = res.data;
 
             setToken(token);
@@ -90,7 +92,7 @@ export const DecisionProvider = ({ children }) => {
         try {
             // 1. Fetch the REAL user data immediately using the new token
             // This ensures we get the 'name', 'avatar', etc. from the backend before the UI renders
-            const res = await axios.get('http://localhost:5000/api/auth/me', {
+            const res = await axios.get(`${API_URL}/api/auth/me`, {
                 headers: { Authorization: `Bearer ${newToken}` }
             });
 
@@ -117,7 +119,7 @@ export const DecisionProvider = ({ children }) => {
     const register = async (name, email, password) => {
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+            const res = await axios.post(`${API_URL}/api/auth/register`, { name, email, password });
             const { token, ...userData } = res.data;
 
             setToken(token);
@@ -150,7 +152,7 @@ export const DecisionProvider = ({ children }) => {
     const fetchDecisions = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:5000/api/entity', getAuthHeader());
+            const res = await axios.get(`${API_URL}/api/entity`, getAuthHeader());
             setDecisions(res.data);
             setError(null);
         } catch (err) {
@@ -163,7 +165,7 @@ export const DecisionProvider = ({ children }) => {
 
     const fetchLogs = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/logs', getAuthHeader());
+            const res = await axios.get(`${API_URL}/api/logs`, getAuthHeader());
             setLogs(res.data);
         } catch (err) {
             console.error('Error fetching logs:', err);
@@ -172,7 +174,7 @@ export const DecisionProvider = ({ children }) => {
 
     const addDecision = async (decisionData) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/entity', decisionData, getAuthHeader());
+            const res = await axios.post(`${API_URL}/api/entity`, decisionData, getAuthHeader());
             setDecisions([res.data, ...decisions]);
             fetchLogs();
             return res.data;
@@ -184,7 +186,7 @@ export const DecisionProvider = ({ children }) => {
 
     const updateDecision = async (id, updatedData) => {
         try {
-            const res = await axios.put(`http://localhost:5000/api/entity/${id}`, updatedData, getAuthHeader());
+            const res = await axios.put(`${API_URL}/api/entity/${id}`, updatedData, getAuthHeader());
             setDecisions(decisions.map(dec => dec._id === id ? res.data : dec));
             fetchLogs();
             return res.data;
@@ -196,7 +198,7 @@ export const DecisionProvider = ({ children }) => {
 
     const deleteDecision = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/entity/${id}`, getAuthHeader());
+            await axios.delete(`${API_URL}/api/entity/${id}`, getAuthHeader());
             setDecisions(decisions.filter(dec => dec._id !== id));
             fetchLogs();
         } catch (err) {
@@ -209,7 +211,7 @@ export const DecisionProvider = ({ children }) => {
 
     const updateUserProfile = async (profileData) => {
         try {
-            const res = await axios.put('http://localhost:5000/api/user/profile', profileData, getAuthHeader());
+            const res = await axios.put(`${API_URL}/api/user/profile`, profileData, getAuthHeader());
             const updatedUser = { ...user, ...res.data };
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -222,7 +224,7 @@ export const DecisionProvider = ({ children }) => {
 
     const uploadProfileImage = async (formData) => {
         try {
-            const res = await axios.post('http://localhost:5000/api/user/profile/upload-image', formData, {
+            const res = await axios.post(`${API_URL}/api/user/profile/upload-image`, formData, {
                 headers: {
                     ...getAuthHeader().headers,
                     'Content-Type': 'multipart/form-data'
@@ -240,7 +242,7 @@ export const DecisionProvider = ({ children }) => {
 
     const deleteAccount = async () => {
         try {
-            await axios.delete('http://localhost:5000/api/user/account', getAuthHeader());
+            await axios.delete(`${API_URL}/api/user/account`, getAuthHeader());
             logout(); // Log the user out and clear state after successful deletion
         } catch (err) {
             console.error('Error deleting account:', err);

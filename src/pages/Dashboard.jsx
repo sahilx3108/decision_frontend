@@ -66,7 +66,7 @@ const Dashboard = () => {
                 Status: d.status
             }));
 
-            const res = await axios.post('http://localhost:5000/api/ai/analyze', { entities: mappedEntities }, config);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/ai/analyze`, { entities: mappedEntities }, config);
             setAiAdvice(res.data.advice);
         } catch (err) {
             console.error("AI Generation Error", err);

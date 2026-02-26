@@ -30,11 +30,11 @@ const Login = () => {
     }, [location, loginWithToken, navigate]);
 
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:5000/api/auth/google';
+        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/google`;
     };
 
     const handleGithubLogin = () => {
-        window.location.href = 'http://localhost:5000/api/auth/github';
+        window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/github`;
     };
 
     const handleSubmit = async (e) => {

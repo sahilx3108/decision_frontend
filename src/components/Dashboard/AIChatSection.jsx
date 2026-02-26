@@ -46,7 +46,7 @@ const AIChatSection = ({ initialAdvice, decisionsContext, onClose }) => {
             };
 
             // Using axios to maintain consistency with the rest of the application
-            const res = await axios.post('http://localhost:5000/api/ai/chat', payload, config);
+            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/ai/chat`, payload, config);
 
             const aiMessage = { role: 'assistant', content: res.data.reply };
             setMessages((prev) => [...prev, aiMessage]);
