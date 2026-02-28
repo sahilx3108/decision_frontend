@@ -66,7 +66,7 @@ export const DecisionProvider = ({ children }) => {
     const login = async (email, password) => {
         setLoading(true);
         try {
-            const res = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/login`, { email, password });
             const { token, ...userData } = res.data;
 
             setToken(token);
@@ -119,7 +119,7 @@ export const DecisionProvider = ({ children }) => {
     const register = async (name, email, password) => {
         setLoading(true);
         try {
-            const res = await axios.post(`${API_URL}/api/auth/register`, { name, email, password });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, { name, email, password });
             const { token, ...userData } = res.data;
 
             setToken(token);
